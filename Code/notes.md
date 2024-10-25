@@ -15,3 +15,9 @@ Fitz
         *zipf: smash all the words together into a text file, do frequency count, then do Nk stuff
         *allotaxometric: see the babynames notebook from earlier assignment // the online resource
         *sentiment analysis: jeremy
+
+
+Short Video Ideas
+- Studying Film community and criticism across Letterboxd and TV Tropes
+- goal 1: study how 'microcultures' differ, if at all, across the subcultures of different genre fans
+- 
