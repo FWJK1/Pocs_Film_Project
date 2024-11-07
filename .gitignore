@@ -1,1 +1,15 @@
 Data/IMBD_Dataframe.csv
+Data/Whole_sets/
+Data/letterboxd_search.csv
+Data/movie_n=8_comments.csv
+Data/movies-vs-tropes.csv
+Data/tropes_imdb_year.csv
+Data/tropes_with_imfb_part2.csv
+Data/tropes_with_imfb.csv
+Data/tropes_year_movie_round2.csv
+Data/tropes_year_movie.csv
+Figures/Sentiment/Histograms/
+Data/Subset Data/genre_text/
+Data/Subset Data/genre_text_scores/
+Data/Subset Data/Bigrams/genre_freq/
+Data/movie_n=8_comments.csv
