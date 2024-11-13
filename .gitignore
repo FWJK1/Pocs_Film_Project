@@ -11,4 +11,7 @@ Data/tropes_year_movie.csv
 Figures/Sentiment/Histograms/
 Data/Subset Data/genre_text/
 Data/Subset Data/genre_text_scores/
-Data/Subset Data/Bigrams/genre_freq/
+Data/Trope_storage/
+Data/Subset Data/Bigrams/
+Data/Trope_storage/movies_by_trope_with_lettersearch.csv
+Data/Trope_storage/movies_by_trope_with_lettersearch_and_length.csv
