@@ -14,4 +14,5 @@ Data/Subset Data/genre_text_scores/
 Data/Trope_storage/
 Data/Subset Data/Bigrams/
 Data/Trope_storage/movies_by_trope_with_lettersearch.csv
-Data/Trope_storage/movies_by_trope_with_lettersearch_and_length.csv
+Data/Trope_storage/movies_by_trope_with_lettersearch_and_length.
+Data/international-movies-json/
