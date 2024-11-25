@@ -1,8 +1,8 @@
 ## changing dimensions of UMAP in berttopic (maybe something like 5d clustering)
-## look into the berttopic visualizer as well\
+## look into the berttopic visualizer as well
 ## seed UMAP with specific words or documents or serve as anchors
 ## different embeddings from different models; look into their functions
 ## potential metrics == topic perplexity 
-## named entity recognition -- spacey 
+## named entity recognition -- spacey or bertopic
 ## UMAP hyper-parameters
 ## playwright -- better than selenium!
