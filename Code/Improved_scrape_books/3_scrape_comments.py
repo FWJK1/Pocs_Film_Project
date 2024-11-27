@@ -148,6 +148,7 @@ def get_reviews_all(data, chunksize=50, begin=0, length=None, n=8, output_file=N
 
             current_time = datetime.now()
             print(f"finished {start} to {start + chunksize}  at  " + current_time.strftime("%Y-%m-%d %H:%M:%S"))
+            print("--" * 50)
     
     print(f"Scraped all comments from {begin} to {length} with chunksize={chunksize}")
 
