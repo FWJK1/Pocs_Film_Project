@@ -102,7 +102,7 @@ def get_reviews_all(data, chunksize=50, begin=0, length=None, n=8, output_file=N
     df['Movie'] = df['Movie'].apply(lambda x: fk_apply_literal(x))
 
     if not output_file:
-        output_file = f'{root}/Data/2020_trope_data/Comments/movie_n={n}_comments.csv'
+        output_file = f'{root}/Data/2020_trope_data/Scraped_Data/movie_n={n}_comments.csv'
 
     if not length:
         length = len(df)
@@ -119,26 +119,32 @@ def get_reviews_all(data, chunksize=50, begin=0, length=None, n=8, output_file=N
             print(f"started {start} to {start + chunksize}  at  " + current_time.strftime("%Y-%m-%d %H:%M:%S"))
             chunk = df.iloc[start: start + chunksize].copy()
 
+            chunk['Budget'] = [[] for _ in range(len(chunk))]  # Initialize with empty lists
+            chunk['comments'] = [[] for _ in range(len(chunk))]   # Initialize with empty lists
+
             # Submit tasks for fetching comments and budget separately
-            futures_comments = [executor.submit(process_movie_data_comments, movie) for movie in chunk['Movie']]
-            futures_budget = [executor.submit(process_movie_data_budget, movie) for movie in chunk['Movie']]
+            futures_comments = {index: executor.submit(process_movie_data_comments, movie) for index, movie in chunk['Movie'].items()} 
+            futures_budget = {index: executor.submit(process_movie_data_budget, movie) for index, movie in chunk['Movie'].items()}
 
             # Collect results for comments and budget separately
-            for future in concurrent.futures.as_completed(futures_comments):
-                results_comments.append(future.result())
-            for future in concurrent.futures.as_completed(futures_budget):
-                results_budget.append(future.result())
+            for index, future in futures_comments.items():
+                    comments = future.result()
+                # print(index, actors, roles)
 
-            # Add the results to the DataFrame
-            chunk['comments'] = results_comments
-            chunk['Budget'] = results_budget
+                # Directly assign the actors and roles to the correct index in the chunk
+                    chunk.at[index, 'comments'] = comments ## note we use .at instead of .loc
+
+
+            for index, future in futures_budget.items():
+                    budget = future.result()
+                # print(index, actors, roles)
+
+                # Directly assign the actors and roles to the correct index in the chunk
+                    chunk.at[index, 'Budget'] = budget ## note we use .at instead of .loc
+
 
             # Write results to CSV
             chunk.to_csv(output_file, mode='a', header=not pd.io.common.file_exists(output_file), index=False)
-
-            # Clear the lists for the next chunk
-            results_comments = []
-            results_budget = []
 
             current_time = datetime.now()
             print(f"finished {start} to {start + chunksize}  at  " + current_time.strftime("%Y-%m-%d %H:%M:%S"))

@@ -48,76 +48,73 @@ def fk_get_url(movie):
         print(movie, e)
         return "None" 
 
-def get_actor_roles(url):
-    actors, roles = [], [] #setup storage
-    html = get_parsed_page(url)
-    cast_list = html.find('div', class_='cast-list text-sluglist') #find the castlist section
+def get_studio(url) -> str:
+    try:
+        page = get_parsed_page(url+ "details/")
 
-    if cast_list:
-        actor_tags = cast_list.find_all('a', href=True)
-        for tag in actor_tags:
-            if "/actor/" in tag['href']:  # Check if the href contains "/actor/"
-                try:
-                    actor_name = tag.text
-                    role = tag['title']
-                    
-                    actors.append(actor_name)
-                    roles.append(role)
-                except Exception as e:
-                    actor_name = tag.text
-                    role = None
-        return actors, roles
-    else:
-        print(f"No dice for {url}, {cast_list}. Double check.")
-        return None, None 
+        studio = []
+
+        div = page.find("div", {"id": ["tab-details"], })
+        a = div.find_all("a")
+
+        for item in a:
+            if item['href'][1:7] == 'studio':
+                studio.append(item.text)
+
+        # print(url, studio)
+        return studio
+    except Exception as e:
+        print(url, e)
+        return None
 
 def process_movie_NER(url):
     time.sleep(random.uniform(1, 3))  # Random delay between 1 and 3 seconds
-    return get_actor_roles(url)
+    return get_studio(url)
 
-def get_NER_all(data, chunksize=50, begin=0, length=None, output_file=None):
+def get_NER_all(data, chunksize=100, begin=0, length=None, output_file=None):
     df = data.copy()
 
     if not output_file:
-        output_file = f'{root}/Data/2020_trope_data/Scraped_Data/actors_roles.csv'
+        output_file = f'{root}/Data/2020_trope_data/Scraped_Data/actors_roles_studios.csv'
 
     if not length:
         length = len(df)
 
-    print(f"Scraping actors and roles for movies from {begin} to {length} with chunksize={chunksize}")
+    print(f"Scraping studios for movies from {begin} to {length} with chunksize={chunksize}")
     
-    results =[]
+    studios =[]
 
     # Parallelizing with ThreadPoolExecutor
-    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
         for start in range(begin, length, chunksize):
             current_time = datetime.now()
             print(f"started {start} to {start + chunksize}  at  " + current_time.strftime("%Y-%m-%d %H:%M:%S"))
             chunk = df.iloc[start: start + chunksize].copy()
 
+            chunk['studio'] = [[] for _ in range(len(chunk))]  # Initialize with empty lists
+
+
             # Submit tasks for fetching comments and budget separately
-            futures =  [executor.submit(process_movie_NER, url) for url in chunk['url']]
+            futures = {index: executor.submit(process_movie_NER, url) for index, url in chunk['url'].items()} 
 
-            for future in concurrent.futures.as_completed(futures):
-                actors, roles = future.result()
-                results.append((actors, roles))
 
-            # Add the results to the DataFrame
-            chunk['actors'], chunk['roles'] = zip(*results)
+            for index, future in futures.items():
+                studio = future.result()
+
+                # Directly assign the actors and roles to the correct index in the chunk
+                chunk.at[index, 'studio'] = studio ## note we use .at instead of .loc
 
             # Write results to CSV
             chunk.to_csv(output_file, mode='a', header=not pd.io.common.file_exists(output_file), index=False)
 
             # Clear the lists for the next chunk
-            results.clear()
+            studios.clear()
 
             current_time = datetime.now()
             print(f"finished {start} to {start + chunksize}  at  " + current_time.strftime("%Y-%m-%d %H:%M:%S"))
     
-    print(f"Scraped all comments from {begin} to {length} with chunksize={chunksize}")
+    print(f"Scraped all studios from {begin} to {length} with chunksize={chunksize}")
 
 # Run the actual code:
-df = pd.read_csv(f"{root}/Data/2020_trope_data/HIT_letterboxd_link_movies.csv")
-df['Movie'] = df['Movie'].apply(fk_apply_literal)
-df['url'] = df['Movie'].apply(lambda x : fk_get_url(x))
+df = pd.read_csv(f'{root}/Data/2020_trope_data/Scraped_Data/actors_roles.csv')
 get_NER_all(df, begin=int(input("Enter Beginning Line: ")))
