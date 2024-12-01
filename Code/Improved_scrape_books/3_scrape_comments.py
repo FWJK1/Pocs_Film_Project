@@ -10,6 +10,8 @@ import requests
 import numpy as np
 import random
 import time
+from playwright.sync_api import sync_playwright
+
 
 # Setup git root
 def find_repo_root(start_path):
@@ -92,6 +94,44 @@ def process_movie_data_comments(movie):
     time.sleep(random.uniform(1, 3))  # Random delay between 1 and 3 seconds
     return fk_movie_popular_reviews(movie, n=8)
 
+def process_movie_data_comments(movie):
+    time.sleep(random.uniform(1, 3))  # Random delay between 1 and 3 seconds
+    
+    # Use Playwright to scrape the page and expand the review
+    with sync_playwright() as p:
+        # Launch browser and open a new page
+        browser = p.chromium.launch(headless=True)  # Set headless=True to run in the background
+        page = browser.new_page()
+
+        # Get the movie URL
+        try:
+            base_url = movie.get('url')
+        except Exception as e:
+            print(f"Error getting movie URL: {e}")
+            return None
+
+        # Go to the movie's reviews page
+        page.goto(base_url + "/reviews/by/activity")
+
+        # Wait for the "more" button to appear and click it to reveal the full review
+        page.wait_for_selector('a.js-reveal')  # Wait for the "more" link to appear
+        page.click('a.js-reveal')  # Click the "more" link to expand the review
+
+        # Wait for the content to fully load after expansion
+        page.wait_for_selector('.body-text')  # You may need to adjust this selector based on your structure
+
+        # Get the expanded review content
+        reviews = page.query_selector_all('.film-detail .body-text')
+        reviews_data = []
+        for review in reviews:
+            text = review.inner_text().strip()
+            reviews_data.append(text)
+
+        # Close the browser after scraping the reviews
+        browser.close()
+
+        return reviews_data  # Return the expanded reviews as a list
+
 def process_movie_data_budget(movie):
     time.sleep(random.uniform(1, 3))  # Random delay between 1 and 3 seconds
     return get_budget(movie)
@@ -154,4 +194,6 @@ def get_reviews_all(data, chunksize=50, begin=0, length=None, n=8, output_file=N
 
 # Run the actual code:
 df = pd.read_csv(f"{root}/Data/2020_trope_data/HIT_letterboxd_link_movies.csv")
-get_reviews_all(df, n=10, begin=int(input("Enter Beginning Line: ")))
+get_reviews_all(df, n=10, length=100,
+                begin=int(input("Enter Beginning Line: ")),
+                output_file=f"{root}/Data/2020_trope_data/Scraped_Data/trial_movie_n=10_comments.csv")
