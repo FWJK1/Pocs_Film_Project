@@ -214,7 +214,7 @@ def replace_actors_with_placeholder(review_list, actor_list, director_list, titl
 
 
 
-def get_NER_all(data, chunksize=20, begin=0, length=None, output_file=None):
+def get_NER_all(data, chunksize=40, begin=0, length=None, output_file=None):
     df = data.copy()
 
     if not output_file:
