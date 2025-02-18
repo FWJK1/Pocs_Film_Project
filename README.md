@@ -4,6 +4,7 @@ community generated data from tvtropes.org and user reviews from letterboxd.com
 Authors: Fitz Koch and Jeremy Elliott
 
 # Environments
+* **NOTE: UNDER CONSTRUCTION** 
 * First, make sure you have conda installed and running.
 * Next, create environments using the following commands
     * `conda env create -f .\Environments\ENV1_environment.yml -n ENV_1` 
