@@ -27,4 +27,4 @@ community generated data from tvtropes.org and user reviews from letterboxd.com
 
 # Contributors
 - [Fitz Koch](https://github.com/FWJK1)
-- [Contributor Name](https://github.com/JeremyE-uvm)
+- [Jeremy Elliott](https://github.com/JeremyE-uvm)
