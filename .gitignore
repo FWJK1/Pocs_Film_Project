@@ -20,3 +20,5 @@ Data/2020_trope_data/
 Data/2020_trope_data/2020_updated_tropeset.csv
 Data/Models
 Data/Models/
+Data/Subset_Data_NER/
+Data/Topic_Modelling
