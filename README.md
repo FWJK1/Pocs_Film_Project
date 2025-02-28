@@ -1,12 +1,11 @@
 # Tropes, Topics, Shifts, and More
-Repository for trope and topic based analyis of film genre using
-community generated data from tvtropes.org and user reviews from letterboxd.com
+Repository for trope and topic based analyis of film genre using community generated data from tvtropes.org and user reviews from letterboxd.com
 
 
 # Environments
 * First, make sure you have conda installed and running.
 * Next, create environments using the following commands
-    * For the general use environment, enter `conda env create -f envs/tropes_letterboxd_general.yml`. Once conda finishes creating the environment, then enter `conda activate tropes_letterboxd_general` and then `pip install -e .`  These last two commands ensure that the general tools used across all scripts and notebooks are recognized. Use this environment for any of the scraping, data analysis, or shifting. Do not use for topic modelling. 
+    * For the general use environment, enter `conda env create -f envs/tropes_letterboxd_general.yml`. Once conda finishes creating the environment, then enter `conda activate tropes_letterboxd_general` and then `pip install -e .`  These  last two commands ensure that the general tools used across all scripts and notebooks are recognized. Use this environment for any of the scraping, data analysis, or shifting. Do not use for topic modelling. 
         * You may need to enter `playwright install` to succesfully scrape using playwright. Conda doesn't always capture that.  
     * For the `bertopic_env` environment, enter `conda env create -f envs/letterboxd_scrape.yml`, and then adapt the commands above. to finish setup. Use this environment for topic modelling and data analysis thereof. 
 

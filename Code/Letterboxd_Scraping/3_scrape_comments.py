@@ -11,37 +11,10 @@ import numpy as np
 import random
 import time
 from playwright.sync_api import sync_playwright
+import Utility.toolbox as tb ## utility functions
 
-
-# Setup git root
-def find_repo_root(start_path):
-    current_path = os.path.abspath(start_path)
-    while True:
-        if os.path.isdir(os.path.join(current_path, '.git')) or \
-           os.path.isfile(os.path.join(current_path, 'README.md')):
-            return current_path
-        parent_path = os.path.dirname(current_path)
-        if parent_path == current_path:
-            break
-        current_path = parent_path
-    return None
-
-root = find_repo_root(os.getcwd())
+root = tb.find_repo_root()
 root = root.replace("\\", "/")
-
-# Define Functions
-def fk_apply_literal(x):
-    try:
-        return ast.literal_eval(x)
-    except Exception as e:
-        return None
-
-def get_parsed_page(url: str) -> BeautifulSoup:
-    headers = {
-        "referer": "https://letterboxd.com",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-    }
-    return BeautifulSoup(requests.get(url, headers=headers).text, "lxml")
 
 def fk_movie_popular_reviews(movie, n=None) -> dict:
     try:
@@ -54,7 +27,7 @@ def fk_movie_popular_reviews(movie, n=None) -> dict:
             urls.append(base + f"/reviews/by/activity/page/{i}")
     ret = []
     for url in urls:
-        page = get_parsed_page(url)
+        page = tb.get_parsed_page(url)
         film_details = page.find_all(class_='film-detail')
         for detail in film_details:
             curr = {}
@@ -81,7 +54,7 @@ def get_budget(movie) -> str:
     match = re.search(r"https?://(?:www\.)?letterboxd\.com/film/([^/]+)/?", url)
     match = match.group(1)
     url = f'https://letterboxd.com/whatsthebudget/film/{match}'
-    page = get_parsed_page(url)
+    page = tb.get_parsed_page(url)
     budget_meta = page.find('meta', {'name': 'description'}) or page.find('meta', {'property': 'og:description'})
     if budget_meta and 'content' in budget_meta.attrs:
         return budget_meta['content']
@@ -139,7 +112,7 @@ def process_movie_data_budget(movie):
 
 def get_reviews_all(data, chunksize=50, begin=0, length=None, n=8, output_file=None):
     df = data.copy()
-    df['Movie'] = df['Movie'].apply(lambda x: fk_apply_literal(x))
+    df['Movie'] = df['Movie'].apply(lambda x: tb.fk_apply_literal(x))
 
     if not output_file:
         output_file = f'{root}/Data/2020_trope_data/Scraped_Data/movie_n={n}_comments.csv'

@@ -10,36 +10,9 @@ import requests
 import numpy as np
 import random
 import time
+import Utility.toolbox as tb
 
-# Setup git root
-def find_repo_root(start_path):
-    current_path = os.path.abspath(start_path)
-    while True:
-        if os.path.isdir(os.path.join(current_path, '.git')) or \
-           os.path.isfile(os.path.join(current_path, 'README.md')):
-            return current_path
-        parent_path = os.path.dirname(current_path)
-        if parent_path == current_path:
-            break
-        current_path = parent_path
-    return None
-
-root = find_repo_root(os.getcwd())
-root = root.replace("\\", "/")
-
-# Define Functions
-def fk_apply_literal(x):
-    try:
-        return ast.literal_eval(x)
-    except Exception as e:
-        return None
-
-def get_parsed_page(url: str) -> BeautifulSoup:
-    headers = {
-        "referer": "https://letterboxd.com",
-        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-    }
-    return BeautifulSoup(requests.get(url, headers=headers).text, "lxml")
+root = tb.find_repo_root()
 
 def fk_get_url(movie):
     try:
@@ -50,7 +23,7 @@ def fk_get_url(movie):
 
 def get_studio(url) -> str:
     try:
-        page = get_parsed_page(url+ "details/")
+        page = tb.get_parsed_page(url+ "details/")
 
         studio = []
 

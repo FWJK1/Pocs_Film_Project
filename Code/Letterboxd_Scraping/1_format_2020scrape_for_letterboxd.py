@@ -6,8 +6,7 @@ from letterboxdpy.movie import Movie
 import git
 from Utility.toolbox import find_repo_root
 
-root = find_repo_root(os.getcwd())
-root = root.replace("\\", "/")
+root = find_repo_root()
 
 ## Replace the filepath with wherever you store the 2020 update trope dataset 
 print("Reading in CSV to Dataframe")
