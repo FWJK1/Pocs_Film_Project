@@ -16,7 +16,7 @@ Repository for trope and topic based analyis of film genre using community gener
 
 # Setup Steps
 ## Letterboxd Setup Steps
-* Use the `scrape_and_model` environment for all scripts and notebooks in this section.
+* Use the `tropes_letterboxd_general` environment for all scripts and notebooks in this section.
 * Run through the numbered `.py` scripts in the `Code\Letterboxd_Scraping` folder in order. If you want, you can handfix any movies that fail to match using `Code/Improved_scrape_books/2_51_link_handfixed_movies_to_letterboxd.ipynb`
 
 # Data Sources 
