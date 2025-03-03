@@ -36,10 +36,17 @@ def nogit_find_repo_root(startpath):
 
 
 ## data structure management (for dicts inside of dataframes, etc)
-def fk_apply_literal(x):
+def eval_pd_data_string_literal(x):
+    """
+    Evaluate a data string within a pandas frame literally (as dict, list, etc).
+    Note, def not perfect
+    """
     try:
         return ast.literal_eval(x)
-    except Exception as e:
+    except Exception:
+        # If parsing fails, check if the string is in the format "a,b,c"
+        if isinstance(x, str) and ',' in x: 
+            return [item.strip() for item in x.split(',')]
         return None
 
 
