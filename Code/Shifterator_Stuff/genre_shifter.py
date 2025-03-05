@@ -78,9 +78,7 @@ class genre_shifter:
         # print(self.comp['Horror'].mean())
         self.ref = self.process_and_merge_tropes(self.ref)
         self.comp = self.process_and_merge_tropes(self.comp)
-        print("ref'", self.ref)
         # print(self.comp)
-        print(len(self.ref))
 
 
 
@@ -146,11 +144,12 @@ class genre_shifter:
         ## actual plotting
         if ax is None:
             ax = plt.gca()
+
         bar_colors = ['darkorange' if v >= 0 else 'cornflowerblue' for v in shifts]
         
         # print(self.shifts['shifts'].apply(lambda x: type(x)).value_counts())  # To check the types of entries in the `shifts` column
 
-        ax.barh(tropes, shifts, color=bar_colors)
+        ax.barh(tropes, shifts, color=bar_colors, edgecolor='black')
         ax.set_xlabel(f'Shifts in {genre}')
         ax.set_title(f"{self.ref_name} ({ref_avg:.3f}) \nVs. \n{self.comp_name} ({comp_avg:.3f})")
         ax.tick_params(axis='y', labelsize=8)
@@ -165,13 +164,11 @@ class genre_shifter:
         return ax
 
     def plot_two(self, movie1, movie2, genre, cutoff):
-        fig, axes = plt.subplots(1, 2, figsize=(14, 6))  # Two subplots side by side
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6), facecolor="papayawhip")
 
-        # First plot: Movie1 relative to Movie2
         self.build_comp_ref_by_movie(movie1, movie2)
         self.plot(genre, cutoff, ax=axes[0])
 
-        # Second plot: Movie2 relative to Movie1
         self.reverse_comp_ref()  # Reverse comparison
         self.plot(genre, cutoff, ax=axes[1], side='right')
 
@@ -182,7 +179,7 @@ class genre_shifter:
     def plot_comparison(self, genre, movie_file, movie_name, ref_range, comp_range):
         self.build_comp_ref_with_time(movie_file, movie_name)
         self.slice_times_and_average(ref_range, comp_range)
-        fig, axes = plt.subplots(1, 2, figsize=(14, 6))
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6), facecolor="papayawhip")
         self.plot(genre, cutoff=50, ax=axes[0])
         self.reverse_comp_ref()
         self.plot(genre, cutoff=50, ax=axes[1], side='right')
