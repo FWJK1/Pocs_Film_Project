@@ -1,7 +1,10 @@
 README.md
 pyproject.toml
 setup.py
+Code/Tropeograms/convert_to_csv_and_savel.py
+Code/Tropeograms/tropeogram.py
 Code/Utility/__init__.py
+Code/Utility/genre_trope_matrix.py
 Code/Utility/toolbox.py
 Code/code_package.egg-info/PKG-INFO
 Code/code_package.egg-info/SOURCES.txt

@@ -7,6 +7,7 @@ from datetime import datetime
 from functools import wraps
 import time
 
+
 ## printing stuff
 def printline():
     print("---" * 50)
@@ -62,3 +63,10 @@ def log_time(func):
         print("\n")
         return result
     return wrapper
+
+
+## accessing stuff we want a lot
+def get_genres():
+    with open(f"{find_repo_root()}/Data/liteweight/genre_list.txt", "r") as f:
+        return f.read().splitlines() 
+

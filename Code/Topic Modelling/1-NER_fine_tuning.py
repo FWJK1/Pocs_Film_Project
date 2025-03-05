@@ -150,8 +150,6 @@ def replace_title_in_review(title, review, threshold=80):
 
 
 
-
-
 # Main function to replace actors, directors, roles in reviews with placeholders
 def replace_actors_with_placeholder(review_list, actor_list, director_list, title, role_list, verbose=None):
     # Parse the review list (assuming it's a string representation of a list)
