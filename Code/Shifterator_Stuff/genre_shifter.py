@@ -87,20 +87,13 @@ class genre_shifter:
         """
         Processes a DataFrame by extracting unique tropes, cleaning up spaces, and merging with a matrix.
         """
-        # Explode the list of tropes and remove spaces
         tropes = df['Trope'].explode().str.replace(" ", '').drop_duplicates()
-        # print(len(tropes))
 
         # Merge the cleaned tropes with the matrix
         trope_df = pd.DataFrame({'Trope': tropes}).sort_values(by='Trope')
         trope_df =  trope_df.merge(self.matrix_df, on='Trope', suffixes=[False, False])
         trope_df = trope_df.sort_values(by='Trope')
         return trope_df
-
-
-
-
-
 
 
     def reverse_comp_ref(self):

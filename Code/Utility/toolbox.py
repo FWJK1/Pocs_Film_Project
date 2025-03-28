@@ -97,7 +97,6 @@ def log_time(func):
         return result
     return wrapper
 
-
 ## accessing stuff we want a lot
 def get_genres():
     with open(f"{find_repo_root()}/Data/liteweight/genre_list.txt", "r") as f:
