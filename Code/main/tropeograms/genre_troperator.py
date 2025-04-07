@@ -15,13 +15,13 @@ from Utility.genre_trope_matrix import build_prop_trope_matrix, build_tf_idf_mat
 root = tb.find_repo_root()
 
 class GenreTroperator:
-    def __init__(self, matrix="prop"):
+    def __init__(self, matrix="prop", movie_path="Data/trope_time_series/alien_tropes.csv"):
         if matrix == 'prop':
             self.matrix  = build_prop_trope_matrix()
         elif matrix == 'tf_idf':
             self.matrix = build_tf_idf_matrix()
         self.genres = tb.get_genres()
-        self.movie_tropes = self.load_movie_data()
+        self.movie_tropes = self.load_movie_data(movie_path)
         self.snapshots = self.build_snapshots()
 
     def get_y_range(self):

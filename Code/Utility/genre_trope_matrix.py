@@ -17,14 +17,11 @@ def get_genres():
 def build_tf_idf_matrix():
     df = pd.read_csv(f"{root}/Data/liteweight/2020_genre_counts_by_trope.csv")
     genres = df.columns[2:29].tolist()
-    all_tropes = df.iloc[:, 1].tolist()
-
 
     ## calculate IDF
     num_genres = len(genres)
     df_tropes = df[genres]  # Genre counts
     df['idf'] = np.log(num_genres / (df_tropes > 0).sum(axis=1))
-     
 
     ## calculate tf
     df[genres] = df[genres].apply(lambda x: x / sum(x), axis=1)
