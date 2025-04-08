@@ -14,8 +14,30 @@ def get_genres():
         f.write("\n".join(genres))
 
 
+def build_tf_idf_matrix():
+    df = pd.read_csv(f"{root}/Data/liteweight/2020_genre_counts_by_trope.csv")
+    genres = df.columns[2:29].tolist()
 
-def build_trope_matrix(norm='num_movies'):
+    ## calculate IDF
+    num_genres = len(genres)
+    df_tropes = df[genres]  # Genre counts
+    df['idf'] = np.log(num_genres / (df_tropes > 0).sum(axis=1))
+
+    ## calculate tf
+    df[genres] = df[genres].apply(lambda x: x / sum(x), axis=1)
+
+    ## combine
+    df[genres] = df[genres].multiply(df['idf'], axis=0)
+    df.drop(columns=['idf'], inplace=True)
+    df.reset_index(drop=True, inplace=True)
+    df.to_csv(f"{root}/Data/liteweight/genre_trope_tfidf_matrix.csv", index=False)
+    df['Trope'] = df['Trope'].str.strip()
+    df = df[['Trope'] + genres]
+    df.dropna(how='all', inplace=True)
+    return df
+
+
+def build_prop_trope_matrix(norm='num_movies'):
     df = pd.read_csv(f"{root}/Data/liteweight/2020_genre_counts_by_trope.csv")
     genres = df.columns[2:29].tolist()
     all_tropes = df.iloc[:, 1].tolist()
@@ -51,5 +73,9 @@ def build_trope_matrix(norm='num_movies'):
     return df_matrix
 
 if __name__ == "__main__":
-    build_trope_matrix(norm="num_movies")
+
+    df=build_prop_trope_matrix()
+    print(df)
+    df =build_tf_idf_matrix()
+    print(df)
     get_genres()

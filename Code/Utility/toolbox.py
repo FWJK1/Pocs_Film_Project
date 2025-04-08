@@ -15,11 +15,11 @@ def printline():
 
 
 ## file management
-def find_repo_root():
-    import git
-    repo = git.Repo(search_parent_directories=True)
-    root = repo.git.rev_parse("--show-toplevel")
-    return root.replace("\\", "/")
+# def find_repo_root():
+#     import git
+#     repo = git.Repo(search_parent_directories=True)
+#     root = repo.git.rev_parse("--show-toplevel")
+#     return root.replace("\\", "/")
 
 def nogit_find_repo_root(startpath):
     current_path = os.path.abspath(startpath) # Path started on
@@ -33,7 +33,24 @@ def nogit_find_repo_root(startpath):
             break
         current_path = parent_path # Set current path to parent path, to check if git path again
     return None # If an issue arises 
-# root = find_repo_root(os.getcwd()) # Good to set as a global variable 
+# root = find_repo_root(os.getcwd()) # Good to set as a global variable
+# 
+def find_repo_root(startpath=os.getcwd()):
+    current_path = os.path.abspath(startpath) # Path started on
+    while True:
+        if os.path.isdir(os.path.join(current_path, '.git')) or os.path.isfile(os.path.join(current_path, 'README.md')): # If on git path, return it
+            ret = current_path
+            break
+        
+        parent_path = os.path.dirname(current_path)
+
+        if parent_path == current_path: # If current path is parent path, stop 
+            break
+        current_path = parent_path # Set current path to parent path, to check if git path again
+    if ret:
+        return ret.replace("\\", "/")
+    else:
+        return None
 
 
 ## data structure management (for dicts inside of dataframes, etc)
@@ -79,7 +96,6 @@ def log_time(func):
         print("\n")
         return result
     return wrapper
-
 
 ## accessing stuff we want a lot
 def get_genres():
