@@ -24,10 +24,7 @@ class GenreTroperator:
         self.movie_tropes = self.load_movie_data(movie_path)
         self.snapshots = self.build_snapshots()
         self.title = title
-
-    def get_y_range(self):
-        values = [snapshot[genre] for snapshot in self.snapshots.values() for genre in self.genres]
-        return (min(v.min() for v in values), max(v.max() for v in values))
+        self.top_5 = self.sort_snapshots()
 
     def load_movie_data(self, path=f"{root}/Data/trope_time_series/alien_tropes.csv", matrix=None):
         """
@@ -97,7 +94,14 @@ class GenreTroperator:
         snapshots_df = pd.DataFrame(snapshots, columns= ['second'] + self.genres + ['active_tropes', 'new_tropes'])
         snapshots_df['total'] = snapshots_df[self.genres].sum(axis=1)
         return snapshots_df
+
+    def get_y_range(self):
+        values = [snapshot[genre] for snapshot in self.snapshots.values() for genre in self.genres] ## this is a list of pandas series
+        return (min(v.min() for v in values), max(v.max() for v in values))
     
-    def get_min_max(self, tau):
-        snap = self.snapshots[tau]
-        return (snap[self.genres].max(), snap[self.genres].min())
+    def sort_snapshots(self):
+        results = {}
+        for genre in self.genres:
+            vals = [snapshot[genre] for snapshot in self.snapshots.values()] ## this is a list of pandas series
+            results[genre] = max(v.max() for v in vals)
+        return sorted(results, key=results.get, reverse=True)

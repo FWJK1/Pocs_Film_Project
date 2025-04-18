@@ -29,8 +29,9 @@ st.set_page_config(layout="wide")
 
 ## vars
 genres = st.session_state.genres
+ranked_genres = st.session_state.ranked_genres
 gt = st.session_state.movies['Alien']
-default_y_range = gt.get_y_range()
+default_y_range = st.session_state.range
 
 ## TODO: Add dynamic scaling options so that we are either comparing across movies
 ## ie we set scales to same in each plot 
@@ -52,9 +53,8 @@ with st.sidebar:
     
     for i in range(num_plots):
         st.subheader(f"Plot {i+1}")
+        genre_selections.append(st.selectbox(f"Select Genre for Plot {i+1}", ranked_genres, index=ranked_genres.index(ranked_genres[i]), key=f"genre_{i}"))
         tau_selections.append(st.selectbox(f"Select Trope Decay for Plot {i+1}", tau_vals, index=0, key=f"tau_{i}"))
-        genre_selections.append(st.selectbox(f"Select Genre for Plot {i+1}", genres, index=genres.index(genres[i]), key=f"genre_{i}"))
-
 
 
 ### plotting
@@ -70,4 +70,4 @@ for title, troper in st.session_state.movies.items():
             fig = st.session_state.plotter.plot_genre_snapshots(snapshot, genre, config=config)
             fig.update_layout(title=f"{genre_selections[i]} Plot ({i+1}) for {title}")
             # Assign a unique key to each chart to prevent duplication issuess
-            st.plotly_chart(fig, use_container_width=True, key=f"plot_{i}_{title}")
+            st.plotly_chart(fig, use_cFontainer_width=True, key=f"plot_{i}_{title}")
