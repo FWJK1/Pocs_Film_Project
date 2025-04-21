@@ -9,7 +9,7 @@ import streamlit as st
 ## homebrew packages
 from genre_troperator import GenreTroperator
 from tropeogram_plotter import TropeogramPlotter
-from Utility.toolbox import find_repo_root
+from Utility.toolbox import find_repo_root, get_genres
 
 root = find_repo_root()
 movies = {
@@ -17,14 +17,27 @@ movies = {
     "Clueless" : f"{root}/Data/trope_time_series/clueless_tropes.csv"
 }
 
-def initialize_state(matrix, max_workers=max(1, os.cpu_count() - 4)):
-    def trope_load(title, path):
-        return title, GenreTroperator(matrix, path)
-    
-    with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        futures = [executor.submit(trope_load, title, path) for title, path in movies.items()]
-        results = {title: troperator for future in as_completed(futures) for title, troperator in [future.result()]}
+def get_range(troperators):
+    ranges = [movie.get_y_range() for movie in troperators]
+    mins = [range[0] for range in ranges]
+    maxs = [range[1] for range in ranges]
+    return min(mins), max(maxs)
 
-    st.session_state.movies = results
+def get_top_5(troperators):
+    maxs = [troperator.top_5 for troperator in troperators]
+    interleaved = [item for group in zip(*maxs) for item in group]
+    seen = set()
+    return  [x for x in interleaved if not(x in seen or seen.add(x))]
+
+def initialize_state(matrix):
+    
+    tropers = {
+        title: GenreTroperator(matrix=matrix, movie_path=path) for title, path in movies.items()
+    }
+    st.session_state.range = get_range(list(tropers.values()))
+    st.session_state.ranked_genres = get_top_5(list(tropers.values()))
+    st.session_state.movies = tropers
+
     st.session_state.plotter = TropeogramPlotter()
-    st.session_state.genres = next(iter(results.values())).genres
+    st.session_state.genres = get_genres()
+

@@ -28,14 +28,14 @@ class TropeogramPlotter:
         tropes_data = []
         times = []
         labels = []
-        
+    
         
         # Loop through all rows to check for first occurrence of tropes
         for idx, row in snapshot_df.iterrows():
             tropes = row['new_tropes']
             if tropes:  # If there are any new tropes at this point
                 for trope in tropes:
-                    times.append(row['second'] / 60)
+                    times.append(row['second'] / 60)  ##  TODO consider changing this to be a percentage of the movie
                     tropes_data.append(row[selected_genre])
                     labels.append(trope)  # Use individual trope as label
 
@@ -53,7 +53,7 @@ class TropeogramPlotter:
 
         fig.update_layout(
             title=f"{selected_genre} Makeup Over Time with Decay {config["tau"]}",
-            xaxis_title="Time (seonds )",
+            xaxis_title="Time (minutes)",
             yaxis = dict(
                 title = "Percentage Makeup",
                 range = [ymin, ymax]
