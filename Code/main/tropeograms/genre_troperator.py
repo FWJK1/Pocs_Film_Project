@@ -95,9 +95,14 @@ class GenreTroperator:
         snapshots_df['total'] = snapshots_df[self.genres].sum(axis=1)
         return snapshots_df
 
-    def get_y_range(self):
+    def get_max_y_range(self):
         values = [snapshot[genre] for snapshot in self.snapshots.values() for genre in self.genres] ## this is a list of pandas series
         return (min(v.min() for v in values), max(v.max() for v in values))
+    
+    @tb.log_time
+    def get_dynamic_y_range(self):
+        values = [snapshot[genre] for snapshot in self.snapshots.values() for genre in self.genres] ## this is a list of pandas series
+        return max(v.max() - v.min() for v in values)
     
     def sort_snapshots(self):
         results = {}

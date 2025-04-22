@@ -31,7 +31,9 @@ st.set_page_config(layout="wide")
 genres = st.session_state.genres
 ranked_genres = st.session_state.ranked_genres
 gt = st.session_state.movies['Alien']
-default_y_range = st.session_state.range
+default_y_range = st.session_state.max_range
+dynamic_y_range = st.session_state.max_range
+
 
 ## TODO: Add dynamic scaling options so that we are either comparing across movies
 ## ie we set scales to same in each plot 
@@ -41,8 +43,10 @@ default_y_range = st.session_state.range
 
 with st.sidebar: 
     st.header("Filtering")
-    selected_range = st.slider("Select Y-Range for all plots", default_y_range[0], default_y_range[1], 
+    selected_range = st.slider("Select Max Y-Range for all plots", default_y_range[0], default_y_range[1], 
                                value=(default_y_range[0], default_y_range[1]))
+    
+    dynamic_range = st.toggle("Dynamic Range")
     bot, top = selected_range
     bot, top = bot-.01, top+.01
     tau_vals = [1, 60, 120, 600, 1200]
@@ -50,6 +54,7 @@ with st.sidebar:
     num_plots = 5  # Number of plots
     tau_selections = []
     genre_selections = []
+
     
     for i in range(num_plots):
         st.subheader(f"Plot {i+1}")
@@ -63,10 +68,19 @@ for title, troper in st.session_state.movies.items():
     for i, (col, tau, genre) in enumerate(zip(cols, tau_selections, genre_selections)):
         with col:
             snapshot = troper.snapshots[tau]
-            config = {
-                "y_range": (bot, top), 
-                "tau" : tau
+
+            if dynamic_range:
+                peak = snapshot[genre].max()
+                val = peak - dynamic_y_range
+                config = {
+                    "y_range" : (val, peak),
+                    "tau": tau
                 }
+            else:
+                config = {
+                    "y_range": (bot, top), 
+                    "tau" : tau
+                    }
             fig = st.session_state.plotter.plot_genre_snapshots(snapshot, genre, config=config)
             fig.update_layout(title=f"{genre_selections[i]} Plot ({i+1}) for {title}")
             # Assign a unique key to each chart to prevent duplication issuess
