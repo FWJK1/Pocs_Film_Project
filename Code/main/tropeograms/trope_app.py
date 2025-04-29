@@ -30,9 +30,10 @@ st.set_page_config(layout="wide")
 ## vars
 genres = st.session_state.genres
 ranked_genres = st.session_state.ranked_genres
-gt = st.session_state.movies['Alien']
+gt = list(st.session_state.movies.values())[0]
 default_y_range = st.session_state.max_range
-dynamic_y_range = st.session_state.max_range
+dynamic_y_range  = st.session_state.dynamic_range
+print(dynamic_y_range)
 
 
 ## TODO: Add dynamic scaling options so that we are either comparing across movies
@@ -59,7 +60,7 @@ with st.sidebar:
     for i in range(num_plots):
         st.subheader(f"Plot {i+1}")
         genre_selections.append(st.selectbox(f"Select Genre for Plot {i+1}", ranked_genres, index=ranked_genres.index(ranked_genres[i]), key=f"genre_{i}"))
-        tau_selections.append(st.selectbox(f"Select Trope Decay for Plot {i+1}", tau_vals, index=0, key=f"tau_{i}"))
+        tau_selections.append(st.selectbox(f"Select Trope Decay for Plot {i+1}", tau_vals, index=3, key=f"tau_{i}"))
 
 
 ### plotting
@@ -70,10 +71,10 @@ for title, troper in st.session_state.movies.items():
             snapshot = troper.snapshots[tau]
 
             if dynamic_range:
-                peak = snapshot[genre].max()
-                val = peak - dynamic_y_range
+                val = snapshot[genre].min()
+                peak = val + dynamic_y_range
                 config = {
-                    "y_range" : (val, peak),
+                    "y_range" : (val-.01, peak+.01),
                     "tau": tau
                 }
             else:

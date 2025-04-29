@@ -15,11 +15,11 @@ def clean_second(t):
     return 0  
 
 def file_cleaner(file):
-    df = pd.read_csv(file)
+    df = pd.read_csv(file, encoding='latin1')
     df[['Start Time', 'End Time']] = df[['Start Time', 'End Time']].map(clean_second)
     df.to_csv(file, index=False)
     
 
 if __name__ == "__main__":
-    file = f"{root}/Data/trope_time_series/Clueless_blank.csv"
+    file = f"{root}/Data/trope_time_series/Fellowship_of_the_Ring_filled.csv"
     file_cleaner(file)
